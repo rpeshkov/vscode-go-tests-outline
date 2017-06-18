@@ -1,5 +1,7 @@
 import * as vscode from 'vscode';
 import * as child from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
 
 import { Package } from './model/package';
 
@@ -41,6 +43,31 @@ export class GoUtils {
                 resolve(result);
             });
         });
+    }
+
+    getTestFunctions(pkg: Package): string[] {
+        let packageFunctions: string[] = [];
+        for (const testFile of pkg.testFiles) {
+
+            const fullTestFileName = path.join("/Users/rpeshkov/go/src/", pkg.name, testFile);
+            packageFunctions = packageFunctions.concat(this.parseTestFunctions(fullTestFileName));
+        }
+
+        return packageFunctions;
+    }
+
+    private parseTestFunctions(filename: string): string[] {
+        const testFunctions: string[] = [];
+        const re = /func\s+(\w+)/g;
+        const fileContents = fs.readFileSync(filename, 'UTF-8');
+        let found: RegExpExecArray;
+        while (found = re.exec(fileContents)) {
+            testFunctions.push(found[1]);
+        }
+
+        return testFunctions;
+
+
     }
 
 }

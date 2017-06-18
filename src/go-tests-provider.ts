@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as child from 'child_process';
 
+import { Package } from './model/package';
 import { GoTest } from './go-test';
 import { GoUtils } from './go-utils';
 
@@ -23,7 +24,13 @@ export class GoTestsProvider implements vscode.TreeDataProvider<GoTest> {
 			return Promise.resolve([]);
 		}
 
-		return new Promise(resolve => resolve(this.getTestsInFolder(this.workspaceRoot)));
+        if (element) {
+            return new Promise(resolve => resolve(this.getTestsForPackage(element.pkg)));
+        } else {
+            return new Promise(resolve => resolve(this.getTestsInFolder(this.workspaceRoot)));
+        }
+
+
 	}
 
     private getTestsInFolder(packageJsonPath: string): GoTest[] | PromiseLike<GoTest[]> {
@@ -33,11 +40,13 @@ export class GoTestsProvider implements vscode.TreeDataProvider<GoTest> {
             this.goUtils.getTestFiles(packageJsonPath)
                 .then(packages => {
                     for (const p of packages) {
-                        const treeNode = new GoTest(p.name, vscode.TreeItemCollapsibleState.None, {
+                        const cmd = {
                             command: 'gotests.package',
                             title: '',
                             arguments: [p.name],
-                        });
+                        };
+
+                        const treeNode = new GoTest(p.name, vscode.TreeItemCollapsibleState.Expanded, p, cmd);
                         items.push(treeNode);
                     }
 
@@ -45,6 +54,21 @@ export class GoTestsProvider implements vscode.TreeDataProvider<GoTest> {
                 });
         });
 	}
+
+    private getTestsForPackage(pkg: Package) {
+        const testFunctions = this.goUtils.getTestFunctions(pkg);
+        const items: GoTest[] = [];
+
+        for (const func of testFunctions) {
+            const cmd = {
+                            command: 'gotests.package',
+                            title: '',
+                            arguments: [func],
+                        };
+            items.push(new GoTest(func, vscode.TreeItemCollapsibleState.None, pkg, cmd));
+        }
+        return items;
+    }
 
 }
 
