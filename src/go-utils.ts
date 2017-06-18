@@ -66,7 +66,4 @@ export class GoUtils {
 
         return testFunctions;
     }
-
-
-
 }

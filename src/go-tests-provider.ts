@@ -4,7 +4,6 @@ import * as child from 'child_process';
 import * as path from 'path';
 
 import { Package } from './model/package';
-import { GoTest } from './go-test';
 import { GoUtils } from './go-utils';
 import { TreeNode, TreeNodeType } from './model/tree-node';
 
