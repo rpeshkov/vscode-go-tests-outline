@@ -12,10 +12,8 @@ export function activate(context: vscode.ExtensionContext) {
     var goTestsProvider = new GoTestsProvider(rootPath);
     vscode.window.registerTreeDataProvider('goTests', goTestsProvider);
 
-
-
-    let disposable = vscode.commands.registerCommand('gotests.package', (arg: string) => {
-        const testCmd = `go test ${arg}`;
+    context.subscriptions.push(vscode.commands.registerCommand('gotests.package', (pkgName: string) => {
+        const testCmd = `go test ${pkgName}`;
         child.exec(testCmd)
             .on('exit', code => {
                 if (code != 0) {
@@ -24,9 +22,19 @@ export function activate(context: vscode.ExtensionContext) {
                     vscode.window.showInformationMessage('Test(s) succeded');
                 }
             });
-    });
+    }));
 
-    context.subscriptions.push(disposable);
+    context.subscriptions.push(vscode.commands.registerCommand('gotests.function', (pkgName: string, funcName: string) => {
+        const testCmd = `go test -run '^${funcName}$' ${pkgName}`;
+        child.exec(testCmd)
+            .on('exit', code => {
+                if (code != 0) {
+                    vscode.window.showErrorMessage('Test(s) failed');
+                } else {
+                    vscode.window.showInformationMessage('Test(s) succeded');
+                }
+            });
+    }));
 }
 
 // this method is called when your extension is deactivated

@@ -48,8 +48,7 @@ export class GoUtils {
     getTestFunctions(pkg: Package): string[] {
         let packageFunctions: string[] = [];
         for (const testFile of pkg.testFiles) {
-
-            const fullTestFileName = path.join("/Users/rpeshkov/go/src/", pkg.name, testFile);
+            const fullTestFileName = path.join(process.env.GOPATH, 'src', pkg.name, testFile);
             packageFunctions = packageFunctions.concat(this.parseTestFunctions(fullTestFileName));
         }
 
@@ -58,7 +57,7 @@ export class GoUtils {
 
     private parseTestFunctions(filename: string): string[] {
         const testFunctions: string[] = [];
-        const re = /func\s+(\w+)/g;
+        const re = /^func\s+(\w+)/mg;
         const fileContents = fs.readFileSync(filename, 'UTF-8');
         let found: RegExpExecArray;
         while (found = re.exec(fileContents)) {
@@ -66,8 +65,8 @@ export class GoUtils {
         }
 
         return testFunctions;
-
-
     }
+
+
 
 }

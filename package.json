@@ -26,10 +26,16 @@
     },
     "main": "./out/src/extension",
     "contributes": {
-        "commands": [{
-            "command": "gotests.package",
-            "title": "Test package"
-        }],
+        "commands": [
+            {
+                "command": "gotests.package",
+                "title": "Test package"
+            },
+            {
+                "command": "gotests.function",
+                "title": "Test function"
+            }
+        ],
         "views": {
 			"explorer": [
 				{

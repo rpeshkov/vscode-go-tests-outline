@@ -1,74 +1,93 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as child from 'child_process';
+import * as path from 'path';
 
 import { Package } from './model/package';
 import { GoTest } from './go-test';
 import { GoUtils } from './go-utils';
+import { TreeNode, TreeNodeType } from './model/tree-node';
 
-export class GoTestsProvider implements vscode.TreeDataProvider<GoTest> {
+export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
+
+    private _onDidChangeTreeData: vscode.EventEmitter<TreeNode | null> = new vscode.EventEmitter<TreeNode | null>();
+    readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
     private goUtils: GoUtils;
+    private tree: TreeNode[];
 
     constructor(private workspaceRoot: string) {
         this.goUtils = new GoUtils();
+
+        vscode.workspace.onDidSaveTextDocument(async x => {
+            this.tree = await this.buildTree();
+            this._onDidChangeTreeData.fire();
+        });
 	}
 
-    getTreeItem(element: GoTest): vscode.TreeItem {
-        return element;
+    getTreeItem(element: TreeNode): vscode.TreeItem {
+        const collapsibleState = element.child && element.child.length > 0
+            ? vscode.TreeItemCollapsibleState.Expanded
+            : vscode.TreeItemCollapsibleState.None;
+
+        let treeItem = new vscode.TreeItem(element.name, collapsibleState);
+		treeItem.iconPath = path.join(__filename, '..', '..', '..', 'resources', 'test.svg');
+		treeItem.contextValue = 'gotest';
+
+        switch (element.type) {
+            case TreeNodeType.package:
+                treeItem.command = {
+                    command: 'gotests.package',
+                    title: '',
+                    arguments: [element.name]
+                };
+                break;
+            case TreeNodeType.func:
+                treeItem.command = {
+                    command: 'gotests.function',
+                    title: '',
+                    arguments: [element.parent.name, element.name]
+                };
+                break;
+        }
+
+        return treeItem;
     }
 
-    getChildren(element?: GoTest): Thenable<GoTest[]> {
+    async getChildren(element?: TreeNode): Promise<TreeNode[]> {
 		if (!this.workspaceRoot) {
 			vscode.window.showInformationMessage('Unable to find tests');
 			return Promise.resolve([]);
 		}
 
-        if (element) {
-            return new Promise(resolve => resolve(this.getTestsForPackage(element.pkg)));
-        } else {
-            return new Promise(resolve => resolve(this.getTestsInFolder(this.workspaceRoot)));
+        if (!element) {
+            this.tree = await this.buildTree();
+            return this.tree;
         }
 
-
+        return element.child;
 	}
 
-    private getTestsInFolder(packageJsonPath: string): GoTest[] | PromiseLike<GoTest[]> {
+    private async buildTree(): Promise<TreeNode[]> {
+        const tree = [];
+        const packages = await this.goUtils.getTestFiles(this.workspaceRoot);
 
-        return new Promise(resolve => {
-            const items: GoTest[] = [];
-            this.goUtils.getTestFiles(packageJsonPath)
-                .then(packages => {
-                    for (const p of packages) {
-                        const cmd = {
-                            command: 'gotests.package',
-                            title: '',
-                            arguments: [p.name],
-                        };
+        for (const p of packages) {
+            const node = new TreeNode(p.name, TreeNodeType.package);
+            node.child = [];
+            node.parent = null;
 
-                        const treeNode = new GoTest(p.name, vscode.TreeItemCollapsibleState.Expanded, p, cmd);
-                        items.push(treeNode);
-                    }
+            const testFunctions = this.goUtils.getTestFunctions(p);
 
-                    resolve(items)
-                });
-        });
-	}
-
-    private getTestsForPackage(pkg: Package) {
-        const testFunctions = this.goUtils.getTestFunctions(pkg);
-        const items: GoTest[] = [];
-
-        for (const func of testFunctions) {
-            const cmd = {
-                            command: 'gotests.package',
-                            title: '',
-                            arguments: [func],
-                        };
-            items.push(new GoTest(func, vscode.TreeItemCollapsibleState.None, pkg, cmd));
+            for (const f of testFunctions) {
+                const fnode = new TreeNode(f, TreeNodeType.func);
+                fnode.parent = node;
+                node.child.push(fnode);
+            }
+            tree.push(node);
         }
-        return items;
+
+        return tree;
     }
-
 }
 
