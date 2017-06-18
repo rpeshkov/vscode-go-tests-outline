@@ -16,6 +16,10 @@ TBD
 
 ## Release Notes
 
+### 0.0.2
+
+Added test functions to tree
+
 ### 0.0.1
 
 Initial release of extension
