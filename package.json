@@ -1,0 +1,55 @@
+{
+    "name": "go-test-outline",
+    "displayName": "Go Tests Outline",
+    "description": "Visual Studio Code extension that adds custom view with tests of currently opened Go project",
+    "version": "0.0.1",
+    "author": {
+        "name": "Roman Peshkov",
+        "email": "peshkovroman@gmail.com"
+    },
+    "publisher": "RomanPeshkov",
+    "engines": {
+        "vscode": "^1.13.0"
+    },
+    "icon": "images/icon.png",
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:gotests.package",
+        "onView:goTests",
+        "onLanguage:go"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/rpeshkov/vscode-go-tests-outline.git"
+    },
+    "main": "./out/src/extension",
+    "contributes": {
+        "commands": [{
+            "command": "gotests.package",
+            "title": "Test package"
+        }],
+        "views": {
+			"explorer": [
+				{
+					"id": "goTests",
+					"name": "Go tests"
+				}
+			]
+		}
+    },
+    "scripts": {
+        "vscode:prepublish": "tsc -p ./",
+        "compile": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.0.3",
+        "vscode": "^1.0.0",
+        "mocha": "^2.3.3",
+        "@types/node": "^6.0.40",
+        "@types/mocha": "^2.2.32"
+    }
+}
