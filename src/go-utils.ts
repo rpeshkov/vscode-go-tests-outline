@@ -7,7 +7,7 @@ import { Package } from './model/package';
 
 export class GoUtils {
 
-    private readonly getTestFilesCmd = 'go list -f \'{{.ImportPath}} {{join .TestGoFiles ","}}\' ./...';
+    private readonly getTestFilesCmd = 'go list -f "{{.ImportPath}} {{join .TestGoFiles \\",\\"}}" ./...';
 
     /**
      * Returns all test files in directory
