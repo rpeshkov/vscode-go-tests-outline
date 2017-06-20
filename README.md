@@ -16,6 +16,9 @@ TBD
 
 ## Release Notes
 
+### 0.0.3
+- Fixed issue with launching on Windows
+
 ### 0.0.2
 
 Added test functions to tree
