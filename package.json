@@ -29,12 +29,15 @@
     "contributes": {
         "commands": [
             {
-                "command": "gotests.package",
-                "title": "Test package"
+                "command": "gotests.launch",
+                "title": "Launch test",
+                "icon": "resources/launch.svg"
             },
             {
-                "command": "gotests.function",
-                "title": "Test function"
+                "command": "gotests.launch_all",
+                "title": "Launch all tests",
+                "category": "",
+                "icon": "resources/launch-all.svg"
             }
         ],
         "views": {
@@ -42,6 +45,27 @@
 				{
 					"id": "goTests",
 					"name": "Go tests"
+				}
+			]
+		},
+        "menus": {
+			"view/title": [
+				{
+					"command": "gotests.launch",
+					"when": "view == goTests",
+					"group": "navigation@1"
+
+				},
+                {
+					"command": "gotests.launch_all",
+					"when": "view == goTests",
+					"group": "navigation@2"
+				}
+			],
+            "view/item/context": [
+				{
+					"command": "gotests.launch",
+					"when": "view == goTests && viewItem == gotest"
 				}
 			]
 		}
