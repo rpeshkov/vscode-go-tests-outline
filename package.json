@@ -2,7 +2,7 @@
     "name": "go-test-outline",
     "displayName": "Go Tests Outline",
     "description": "Visual Studio Code extension that adds custom view with tests of currently opened Go project",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "author": {
         "name": "Roman Peshkov",
         "email": "peshkovroman@gmail.com"
