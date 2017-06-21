@@ -16,16 +16,18 @@ TBD
 
 ## Release Notes
 
+### 0.0.4
+- Added view action for launching tests
+- Added output channel 'Go Tests Outline'
+
 ### 0.0.3
 - Fixed issue with launching on Windows
 
 ### 0.0.2
-
-Added test functions to tree
+- Added test functions to tree
 
 ### 0.0.1
-
-Initial release of extension
+- Initial release of extension
 
 ## License
 

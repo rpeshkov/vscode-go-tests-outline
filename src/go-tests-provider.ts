@@ -15,6 +15,8 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
     private goUtils: GoUtils;
     private tree: TreeNode[];
 
+    selected: TreeNode;
+
     constructor(private workspaceRoot: string) {
         this.goUtils = new GoUtils();
 
@@ -33,22 +35,11 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
 		treeItem.iconPath = path.join(__filename, '..', '..', '..', 'resources', 'test.svg');
 		treeItem.contextValue = 'gotest';
 
-        switch (element.type) {
-            case TreeNodeType.package:
-                treeItem.command = {
-                    command: 'gotests.package',
-                    title: '',
-                    arguments: [element.name]
-                };
-                break;
-            case TreeNodeType.func:
-                treeItem.command = {
-                    command: 'gotests.function',
-                    title: '',
-                    arguments: [element.parent.name, element.name]
-                };
-                break;
-        }
+        treeItem.command = {
+            command: 'gotests_internal.select',
+            title: '',
+            arguments: [element]
+        };
 
         return treeItem;
     }
@@ -74,13 +65,14 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
         for (const p of packages) {
             const node = new TreeNode(p.name, TreeNodeType.package);
             node.child = [];
-            node.parent = null;
+            node.pkgName = p.name;
 
             const testFunctions = this.goUtils.getTestFunctions(p);
 
             for (const f of testFunctions) {
                 const fnode = new TreeNode(f, TreeNodeType.func);
-                fnode.parent = node;
+                fnode.pkgName = node.pkgName;
+                fnode.funcName = f;
                 node.child.push(fnode);
             }
             tree.push(node);

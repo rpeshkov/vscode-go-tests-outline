@@ -6,6 +6,7 @@ export enum TreeNodeType {
 
 export class TreeNode {
     constructor(public name: string, public type: TreeNodeType) {}
-    parent: TreeNode;
+    pkgName: string;
+    funcName: string;
     child: TreeNode[];
 }
