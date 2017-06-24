@@ -30,7 +30,7 @@ export function activate(context: vscode.ExtensionContext) {
         outputChannel.show();
     });
 
-    vscode.commands.registerCommand('gotests_internal.select', (node: TreeNode) => goTestsProvider.selected = node);
+
 }
 
 // this method is called when your extension is deactivated

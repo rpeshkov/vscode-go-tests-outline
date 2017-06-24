@@ -14,18 +14,19 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
     readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
     private goUtils: GoUtils;
-    tree: TreeNode[];
+    private tree: TreeNode[];
+    private selected: TreeNode;
 
     private statusIcons = new Map<TestStatus, string>([
         [TestStatus.Unknown, 'test.svg'],
-        [TestStatus.Failed, 'launch_all.svg'],
-        [TestStatus.Passed, 'launch.svg'],
+        [TestStatus.Failed, 'failed.svg'],
+        [TestStatus.Passed, 'passed.svg'],
     ]);
-
-    selected: TreeNode;
 
     constructor(private workspaceRoot: string, private goTest: GoTest) {
         this.goUtils = new GoUtils();
+
+        vscode.commands.registerCommand('gotests_internal.select', (node: TreeNode) => this.selected = node);
 
         vscode.workspace.onDidSaveTextDocument(async x => {
             this.tree = await this.buildTree();
