@@ -84,11 +84,15 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
         const tree = [];
         const packages = await this.goUtils.getTestFiles(this.workspaceRoot);
 
+
         for (const p of packages) {
+
             const node = new TreeNode(p.name, TreeNodeType.package);
             node.child = [];
             node.pkgName = p.name;
-            node.status = TestStatus.Unknown;
+
+            const prevNode = this.tree && this.tree.find(x => x.pkgName === p.name);
+            node.status = prevNode ? prevNode.status : TestStatus.Unknown;
 
             const testFunctions = this.goUtils.getTestFunctions(p);
 
@@ -97,6 +101,11 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
                 fnode.pkgName = node.pkgName;
                 fnode.funcName = f;
                 fnode.status = TestStatus.Unknown;
+                if (prevNode && prevNode.child) {
+                    const prevFuncNode = prevNode.child.find(x => x.funcName === f);
+                    fnode.status = prevFuncNode ? prevFuncNode.status : fnode.status;
+                }
+
                 node.child.push(fnode);
             }
             tree.push(node);
@@ -107,15 +116,15 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
 
     private updateStatuses(nodes: TreeNode[], results: Map<string, boolean>) {
         for (const n of nodes || []) {
-            this.updateStatuses(n.child, results);
-
             const k = n.funcName || n.pkgName;
 
             if (results.has(k)) {
                 n.status = results.get(k) ? TestStatus.Passed : TestStatus.Failed;
-                this._onDidChangeTreeData.fire(n);
             }
+
+            this.updateStatuses(n.child, results);
         }
+        this._onDidChangeTreeData.fire();
     }
 }
 

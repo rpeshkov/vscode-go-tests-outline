@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg width="16" height="16" viewBox="-3 0 16 16" xmlns="http://www.w3.org/2000/svg">
-  <path d="M -0.771 8.214 L 3.515 13.802 L 10.862 1.618" style="stroke-width: 1px; paint-order: stroke markers; fill: none; stroke: rgb(137, 209, 133);"/>
+  <path d="M -1.372 8.29 L 3.293 14.403 L 11.291 1.074" style="paint-order: stroke markers; stroke: rgb(137, 209, 133); fill-rule: evenodd; fill: none; stroke-linejoin: bevel; stroke-width: 4;"/>
 </svg>
