@@ -5,7 +5,7 @@ import * as path from 'path';
 
 import { Package } from './model/package';
 import { GoUtils } from './go-utils';
-import { TreeNode, TreeNodeType } from './model/tree-node';
+import { TreeNode, TreeNodeType, TestStatus } from './model/tree-node';
 
 export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
 
@@ -13,7 +13,13 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
     readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
     private goUtils: GoUtils;
-    private tree: TreeNode[];
+    tree: TreeNode[];
+
+    private statusIcons = new Map<TestStatus, string>([
+        [TestStatus.Unknown, 'test.svg'],
+        [TestStatus.Failed, 'launch_all.svg'],
+        [TestStatus.Passed, 'launch.svg'],
+    ]);
 
     selected: TreeNode;
 
@@ -26,13 +32,17 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
         });
 	}
 
+    fire(data: TreeNode | null) {
+        this._onDidChangeTreeData.fire(data);
+    }
+
     getTreeItem(element: TreeNode): vscode.TreeItem {
         const collapsibleState = element.child && element.child.length > 0
             ? vscode.TreeItemCollapsibleState.Expanded
             : vscode.TreeItemCollapsibleState.None;
 
         let treeItem = new vscode.TreeItem(element.name, collapsibleState);
-		treeItem.iconPath = path.join(__filename, '..', '..', '..', 'resources', 'test.svg');
+		treeItem.iconPath = path.join(__filename, '..', '..', '..', 'resources', this.statusIcons.get(element.status));
 		treeItem.contextValue = 'gotest';
 
         treeItem.command = {
@@ -59,6 +69,7 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
 	}
 
     private async buildTree(): Promise<TreeNode[]> {
+        console.log('rebuild');
         const tree = [];
         const packages = await this.goUtils.getTestFiles(this.workspaceRoot);
 
@@ -66,6 +77,7 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
             const node = new TreeNode(p.name, TreeNodeType.package);
             node.child = [];
             node.pkgName = p.name;
+            node.status = TestStatus.Unknown;
 
             const testFunctions = this.goUtils.getTestFunctions(p);
 
@@ -73,6 +85,7 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
                 const fnode = new TreeNode(f, TreeNodeType.func);
                 fnode.pkgName = node.pkgName;
                 fnode.funcName = f;
+                fnode.status = TestStatus.Unknown;
                 node.child.push(fnode);
             }
             tree.push(node);

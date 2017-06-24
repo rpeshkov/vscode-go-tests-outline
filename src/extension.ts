@@ -5,31 +5,37 @@ import * as vscode from 'vscode';
 import * as child from 'child_process';
 
 import { GoTestsProvider } from './go-tests-provider';
-import { TreeNode, TreeNodeType } from './model/tree-node';
+import { TreeNode, TreeNodeType, TestStatus } from './model/tree-node';
 import { GoTest } from './utils/go-test';
+import { GoTestParser } from './utils/go-test-parser';
+
+
+let goTestsProvider: GoTestsProvider;
 
 export function activate(context: vscode.ExtensionContext) {
     const rootPath = vscode.workspace.rootPath;
     const outputChannel = vscode.window.createOutputChannel("Go Tests Outline");
 
-    const goTestsProvider = new GoTestsProvider(rootPath);
+    goTestsProvider = new GoTestsProvider(rootPath);
     vscode.window.registerTreeDataProvider('goTests', goTestsProvider);
 
-    const goTest = new GoTest(outputChannel);
+    const parser = new GoTestParser();
+
+    const goTest = new GoTest(outputChannel, parser);
 
     vscode.commands.registerCommand('gotests.launch', (test: TreeNode) => {
         test = test || goTestsProvider.selected;
         goTest.launch(test.pkgName, test.funcName)
-            .then(code => {
-                handleResult(code);
+            .then(results => {
+                handleResult(goTestsProvider.tree, results);
                 outputChannel.show();
             });
     });
 
     vscode.commands.registerCommand('gotests.launch_all', () => {
         goTest.launch()
-            .then(code => {
-                handleResult(code);
+            .then(results => {
+                handleResult(goTestsProvider.tree, results);
                 outputChannel.show();
             });
     });
@@ -41,10 +47,15 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {
 }
 
-function handleResult(code: number) {
-    if (code != 0) {
-        vscode.window.showErrorMessage('Test(s) failed');
-    } else {
-        vscode.window.showInformationMessage('Test(s) succeded');
+function handleResult(nodes: TreeNode[], results: Map<string, boolean>) {
+    for (const n of nodes || []) {
+        const k = n.funcName || n.pkgName;
+
+        if (results.has(k)) {
+            n.status = results.get(k) ? TestStatus.Passed : TestStatus.Failed;
+            goTestsProvider.fire(n);
+        }
+
+        handleResult(n.child, results);
     }
 }
