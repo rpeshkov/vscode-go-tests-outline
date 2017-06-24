@@ -9,7 +9,6 @@ import { TreeNode, TreeNodeType, TestStatus } from './model/tree-node';
 import { GoTest } from './utils/go-test';
 import { GoTestParser } from './utils/go-test-parser';
 
-
 let goTestsProvider: GoTestsProvider;
 
 export function activate(context: vscode.ExtensionContext) {
@@ -21,16 +20,14 @@ export function activate(context: vscode.ExtensionContext) {
     goTestsProvider = new GoTestsProvider(rootPath, goTest);
     vscode.window.registerTreeDataProvider('goTests', goTestsProvider);
 
-    vscode.commands.registerCommand('gotests.launch', test => {
-        goTestsProvider.launch(test);
+    vscode.commands.registerCommand('gotests.launch', async test => {
+        await goTestsProvider.launch(test);
         outputChannel.show();
     });
-    vscode.commands.registerCommand('gotests.launch_all', () => {
-        goTestsProvider.launchAll();
+    vscode.commands.registerCommand('gotests.launch_all', async () => {
+        await goTestsProvider.launchAll();
         outputChannel.show();
     });
-
-
 }
 
 // this method is called when your extension is deactivated

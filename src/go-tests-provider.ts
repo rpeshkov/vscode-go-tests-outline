@@ -10,13 +10,16 @@ import { TreeNode, TreeNodeType, TestStatus } from './model/tree-node';
 
 export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
 
-    private _onDidChangeTreeData: vscode.EventEmitter<TreeNode | null> = new vscode.EventEmitter<TreeNode | null>();
+    private _onDidChangeTreeData = new vscode.EventEmitter<TreeNode | null>();
     readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
     private goUtils: GoUtils;
     private tree: TreeNode[];
     private selected: TreeNode;
 
+    /**
+     * Mapping of status to respective images filenames
+     */
     private statusIcons = new Map<TestStatus, string>([
         [TestStatus.Unknown, 'test.svg'],
         [TestStatus.Failed, 'failed.svg'],
@@ -66,15 +69,15 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
         return element.child;
 	}
 
-    launch(test: TreeNode) {
+    async launch(test: TreeNode) {
         test = test || this.selected;
-        this.goTest.launch(test.pkgName, test.funcName)
-            .then(results => this.handleResult(this.tree, results));
+        const results = await this.goTest.launch(test.pkgName, test.funcName)
+        this.updateStatuses(this.tree, results);
     }
 
-    launchAll() {
-        this.goTest.launch()
-            .then(results => this.handleResult(this.tree, results));
+    async launchAll() {
+        const results = await this.goTest.launch();
+        this.updateStatuses(this.tree, results);
     }
 
     private async buildTree(): Promise<TreeNode[]> {
@@ -102,16 +105,16 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
         return tree;
     }
 
-    private handleResult(nodes: TreeNode[], results: Map<string, boolean>) {
+    private updateStatuses(nodes: TreeNode[], results: Map<string, boolean>) {
         for (const n of nodes || []) {
+            this.updateStatuses(n.child, results);
+
             const k = n.funcName || n.pkgName;
 
             if (results.has(k)) {
                 n.status = results.get(k) ? TestStatus.Passed : TestStatus.Failed;
                 this._onDidChangeTreeData.fire(n);
             }
-
-            this.handleResult(n.child, results);
         }
     }
 }
