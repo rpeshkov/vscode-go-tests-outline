@@ -41,34 +41,33 @@
             }
         ],
         "views": {
-			"explorer": [
-				{
-					"id": "goTests",
-					"name": "Go tests"
-				}
-			]
-		},
-        "menus": {
-			"view/title": [
-				{
-					"command": "gotests.launch",
-					"when": "view == goTests",
-					"group": "navigation@1"
-
-				},
+            "explorer": [
                 {
-					"command": "gotests.launch_all",
-					"when": "view == goTests",
-					"group": "navigation@2"
-				}
-			],
+                    "id": "goTests",
+                    "name": "Go tests"
+                }
+            ]
+        },
+        "menus": {
+            "view/title": [
+                {
+                    "command": "gotests.launch",
+                    "when": "view == goTests",
+                    "group": "navigation@1"
+                },
+                {
+                    "command": "gotests.launch_all",
+                    "when": "view == goTests",
+                    "group": "navigation@2"
+                }
+            ],
             "view/item/context": [
-				{
-					"command": "gotests.launch",
-					"when": "view == goTests && viewItem == gotest"
-				}
-			]
-		}
+                {
+                    "command": "gotests.launch",
+                    "when": "view == goTests && viewItem == gotest"
+                }
+            ]
+        }
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",

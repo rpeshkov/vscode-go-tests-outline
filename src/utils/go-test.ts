@@ -10,7 +10,7 @@ export class GoTest {
         return new Promise<number>(resolve => {
             let cmd = `go test -v`;
             if (funcName) {
-                cmd += ` -run "^${funcName}"`;
+                cmd += ` -run "^${funcName}$"`;
             }
             cmd += ` ${pkgName}`;
 
