@@ -5,6 +5,7 @@ import * as path from 'path';
 
 import { Package } from './model/package';
 import { GoUtils } from './go-utils';
+import { GoTest } from './utils/go-test';
 import { TreeNode, TreeNodeType, TestStatus } from './model/tree-node';
 
 export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
@@ -23,7 +24,7 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
 
     selected: TreeNode;
 
-    constructor(private workspaceRoot: string) {
+    constructor(private workspaceRoot: string, private goTest: GoTest) {
         this.goUtils = new GoUtils();
 
         vscode.workspace.onDidSaveTextDocument(async x => {
@@ -31,10 +32,6 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
             this._onDidChangeTreeData.fire();
         });
 	}
-
-    fire(data: TreeNode | null) {
-        this._onDidChangeTreeData.fire(data);
-    }
 
     getTreeItem(element: TreeNode): vscode.TreeItem {
         const collapsibleState = element.child && element.child.length > 0
@@ -68,8 +65,18 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
         return element.child;
 	}
 
+    launch(test: TreeNode) {
+        test = test || this.selected;
+        this.goTest.launch(test.pkgName, test.funcName)
+            .then(results => this.handleResult(this.tree, results));
+    }
+
+    launchAll() {
+        this.goTest.launch()
+            .then(results => this.handleResult(this.tree, results));
+    }
+
     private async buildTree(): Promise<TreeNode[]> {
-        console.log('rebuild');
         const tree = [];
         const packages = await this.goUtils.getTestFiles(this.workspaceRoot);
 
@@ -92,6 +99,19 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
         }
 
         return tree;
+    }
+
+    private handleResult(nodes: TreeNode[], results: Map<string, boolean>) {
+        for (const n of nodes || []) {
+            const k = n.funcName || n.pkgName;
+
+            if (results.has(k)) {
+                n.status = results.get(k) ? TestStatus.Passed : TestStatus.Failed;
+                this._onDidChangeTreeData.fire(n);
+            }
+
+            this.handleResult(n.child, results);
+        }
     }
 }
 
