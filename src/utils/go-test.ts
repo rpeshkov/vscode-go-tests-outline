@@ -1,13 +1,14 @@
 import * as vscode from 'vscode';
 import * as child from 'child_process';
 import * as path from 'path';
+import { GoTestParser } from './go-test-parser';
 
 export class GoTest {
 
-    constructor(private channel: vscode.OutputChannel) { }
+    constructor(private channel: vscode.OutputChannel, private parser: GoTestParser) { }
 
-    launch(pkgName: string = './...', funcName: string = undefined): Promise<number> {
-        return new Promise<number>(resolve => {
+    launch(pkgName: string = './...', funcName: string = undefined): Promise<Map<string, boolean>> {
+        return new Promise<Map<string, boolean>>(resolve => {
             let cmd = `go test -v`;
             if (funcName) {
                 cmd += ` -run "^${funcName}$"`;
@@ -18,14 +19,16 @@ export class GoTest {
                 cwd: vscode.workspace.rootPath
             };
 
-            child.exec(cmd, execOptions, this.execCallback.bind(this))
-                .on('exit', code => resolve(code));
-        });
-    }
+            child.exec(cmd, execOptions,
+                (error, stdout, stderr) => {
+                    const output = this.expandFilePathInOutput(stdout, vscode.workspace.rootPath);
+                    this.channel.appendLine(output);
 
-    private execCallback(error: Error, stdout: string, stderr: string) {
-        const output = this.expandFilePathInOutput(stdout, vscode.workspace.rootPath);
-        this.channel.appendLine(output);
+                    const testResult = this.parser.parse(stdout);
+                    resolve(testResult);
+                });
+
+        });
     }
 
     /**
