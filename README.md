@@ -16,6 +16,10 @@ TBD
 
 ## Release Notes
 
+## 0.1.0
+- Added icons for test status
+- Fixed bug when launching 1 test may cause launch of many tests
+
 ### 0.0.4
 - Added view action for launching tests
 - Added output channel 'Go Tests Outline'
@@ -25,9 +29,6 @@ TBD
 
 ### 0.0.2
 - Added test functions to tree
-
-### 0.0.1
-- Initial release of extension
 
 ## License
 

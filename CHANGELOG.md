@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.0 - 25th June, 2017
+- Added icons for test status
+- Fixed bug when launching 1 test may cause launch of many tests
+
 ## 0.0.4 - 22nd June, 2017
 - Added view action for launching tests
 - Added output channel 'Go Tests Outline'
