@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.1.1 - 2nd July, 2017
+- Only functions starting with 'Test' shown
+
 ## 0.1.0 - 25th June, 2017
 - Added icons for test status
 - Fixed bug when launching 1 test may cause launch of many tests

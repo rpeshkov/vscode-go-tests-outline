@@ -16,6 +16,9 @@ TBD
 
 ## Release Notes
 
+## 0.1.1
+- Only functions starting with 'Test' shown
+
 ## 0.1.0
 - Added icons for test status
 - Fixed bug when launching 1 test may cause launch of many tests

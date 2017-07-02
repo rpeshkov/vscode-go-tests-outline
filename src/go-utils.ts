@@ -61,7 +61,10 @@ export class GoUtils {
         const fileContents = fs.readFileSync(filename, 'UTF-8');
         let found: RegExpExecArray;
         while (found = re.exec(fileContents)) {
-            testFunctions.push(found[1]);
+            const funcName = found[1]
+            if (funcName.startsWith('Test')) {
+                testFunctions.push(found[1]);
+            }
         }
 
         return testFunctions;
