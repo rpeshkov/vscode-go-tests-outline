@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 16 16" fill-rule="evenodd" clip-rule="evenodd" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="1.414" xmlns="http://www.w3.org/2000/svg">
+  <g transform="matrix(0.367023, 0, 0, 0.367023, -3.640867, -3.125937)">
+    <circle cx="36.37" cy="30.367" r="5.615" fill="#858990" transform="matrix(1.000001, 0, 0, 1, 11.528975, 9.052)"/>
+    <circle cx="15.535" cy="39.419" r="5.615" fill="#858990"/>
+    <circle cx="12.933" cy="30.367" r="5.614" fill="#858990" fill-opacity=".404" transform="matrix(1.000001, 0, 0, 1, 18.783993, 9.052)"/>
+    <path d="M 15.535 29.201 C 17.753 20.692 26.448 15.594 34.956 17.812 C 40.689 19.307 44.878 23.746 46.317 29.085 M 38.575 25.21 L 46.426 29.391 M 48.538 20.751 L 46.426 29.391" fill="none" stroke-width="3" stroke="#f90"/>
+  </g>
+</svg>

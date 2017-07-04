@@ -6,6 +6,7 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as myExtension from '../src/extension';
 import { GoTestParser } from '../src/utils/go-test-parser';
+import { TestStatus } from "../src/model/test-status";
 
 // Defines a Mocha test suite to group tests of similar kind together
 suite("GoTestParser", () => {
@@ -41,12 +42,12 @@ ok  	github.com/rpeshkov/multipkg/config	0.012s`;
         assert.equal(result.size, 6);
 
         const expectedResult = {
-            "TestBlank": true,
-            "TestSuccess": true,
-            "TestSuccessMultiline": true,
-            "TestMultilevel": true,
-            "TestConfigLoadedSuccesfully": true,
-            "github.com/rpeshkov/multipkg/config": true
+            "TestBlank": TestStatus.Passed,
+            "TestSuccess": TestStatus.Passed,
+            "TestSuccessMultiline": TestStatus.Passed,
+            "TestMultilevel": TestStatus.Passed,
+            "TestConfigLoadedSuccesfully": TestStatus.Passed,
+            "github.com/rpeshkov/multipkg/config": TestStatus.Passed
         };
 
         for (const k in expectedResult) {

@@ -16,22 +16,15 @@ TBD
 
 ## Release Notes
 
+## 0.1.2
+- Added handling for skipped tests
+
 ## 0.1.1
 - Only functions starting with 'Test' shown
 
 ## 0.1.0
 - Added icons for test status
 - Fixed bug when launching 1 test may cause launch of many tests
-
-### 0.0.4
-- Added view action for launching tests
-- Added output channel 'Go Tests Outline'
-
-### 0.0.3
-- Fixed issue with launching on Windows
-
-### 0.0.2
-- Added test functions to tree
 
 ## License
 

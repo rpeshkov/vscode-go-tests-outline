@@ -2,13 +2,14 @@ import * as vscode from 'vscode';
 import * as child from 'child_process';
 import * as path from 'path';
 import { GoTestParser } from './go-test-parser';
+import { TestStatus } from "../model/test-status";
 
 export class GoTest {
 
     constructor(private channel: vscode.OutputChannel, private parser: GoTestParser) { }
 
-    launch(pkgName: string = './...', funcName: string = undefined): Promise<Map<string, boolean>> {
-        return new Promise<Map<string, boolean>>(resolve => {
+    launch(pkgName: string = './...', funcName: string = undefined): Promise<Map<string, TestStatus>> {
+        return new Promise<Map<string, TestStatus>>(resolve => {
             let cmd = `go test -v`;
             if (funcName) {
                 cmd += ` -run "^${funcName}$"`;

@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.1.2 - 5th July, 2017
+- Added handling for skipped tests
+
 ## 0.1.1 - 2nd July, 2017
 - Only functions starting with 'Test' shown
 

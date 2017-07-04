@@ -6,7 +6,8 @@ import * as path from 'path';
 import { Package } from './model/package';
 import { GoUtils } from './go-utils';
 import { GoTest } from './utils/go-test';
-import { TreeNode, TreeNodeType, TestStatus } from './model/tree-node';
+import { TreeNode, TreeNodeType } from './model/tree-node';
+import { TestStatus } from './model/test-status';
 
 export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
 
@@ -24,6 +25,7 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
         [TestStatus.Unknown, 'test.svg'],
         [TestStatus.Failed, 'failed.svg'],
         [TestStatus.Passed, 'passed.svg'],
+        [TestStatus.Skipped, 'skipped.svg'],
     ]);
 
     constructor(private workspaceRoot: string, private goTest: GoTest) {
@@ -114,12 +116,12 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
         return tree;
     }
 
-    private updateStatuses(nodes: TreeNode[], results: Map<string, boolean>) {
+    private updateStatuses(nodes: TreeNode[], results: Map<string, TestStatus>) {
         for (const n of nodes || []) {
             const k = n.funcName || n.pkgName;
 
             if (results.has(k)) {
-                n.status = results.get(k) ? TestStatus.Passed : TestStatus.Failed;
+                n.status = results.get(k);
             }
 
             this.updateStatuses(n.child, results);
