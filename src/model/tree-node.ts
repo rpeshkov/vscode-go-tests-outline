@@ -1,3 +1,5 @@
+import { TestStatus } from './test-status';
+
 export enum TreeNodeType {
     package,
     func,
@@ -10,10 +12,4 @@ export class TreeNode {
     funcName: string;
     status: TestStatus;
     child: TreeNode[];
-}
-
-export enum TestStatus {
-    Unknown,
-    Failed,
-    Passed
 }

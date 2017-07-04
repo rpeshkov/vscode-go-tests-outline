@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import * as child from 'child_process';
 
 import { GoTestsProvider } from './go-tests-provider';
-import { TreeNode, TreeNodeType, TestStatus } from './model/tree-node';
+import { TreeNode } from './model/tree-node';
 import { GoTest } from './utils/go-test';
 import { GoTestParser } from './utils/go-test-parser';
 

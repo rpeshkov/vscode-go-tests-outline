@@ -1,10 +1,13 @@
+import { TestStatus } from '../model/test-status';
+
 export class GoTestParser {
     /**
      * regex for matching test result
      * @example "--- PASS: TestBlank (0.00s)"
      * @example "--- FAIL: TestSomething (0.00s)"
+     * @example "--- SKIP: TestCaseInsentitiveGOPATH (0.00s)"
      */
-    private readonly funcRe = /^--- (PASS|FAIL): (\S+)\s\(.+\)$/;
+    private readonly funcRe = /^--- (PASS|FAIL|SKIP): (\S+)\s\(.+\)$/;
 
     /**
      * regex for matching package test run result
@@ -17,13 +20,14 @@ export class GoTestParser {
      * Map for different text statuses
      */
     private readonly statusMap = {
-        "PASS": true,
-        "ok": true,
-        "FAIL": false
+        'PASS': TestStatus.Passed,
+        'ok': TestStatus.Passed,
+        'FAIL': TestStatus.Failed,
+        'SKIP': TestStatus.Unknown
     };
 
-    parse(input: string): Map<string, boolean> {
-        const result = new Map<string, boolean>();
+    parse(input: string): Map<string, TestStatus> {
+        const result = new Map<string, TestStatus>();
 
         for (const line of input.split('\n')) {
             const funcMatch = this.funcRe.exec(line);
