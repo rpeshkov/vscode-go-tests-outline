@@ -1,5 +1,6 @@
 export enum TestStatus {
     Unknown,
     Failed,
-    Passed
+    Passed,
+    Skipped
 }

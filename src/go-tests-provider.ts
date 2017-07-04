@@ -25,6 +25,7 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
         [TestStatus.Unknown, 'test.svg'],
         [TestStatus.Failed, 'failed.svg'],
         [TestStatus.Passed, 'passed.svg'],
+        [TestStatus.Skipped, 'skipped.svg'],
     ]);
 
     constructor(private workspaceRoot: string, private goTest: GoTest) {
@@ -120,7 +121,7 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
             const k = n.funcName || n.pkgName;
 
             if (results.has(k)) {
-                n.status = results.get(k) ? TestStatus.Passed : TestStatus.Failed;
+                n.status = results.get(k);
             }
 
             this.updateStatuses(n.child, results);

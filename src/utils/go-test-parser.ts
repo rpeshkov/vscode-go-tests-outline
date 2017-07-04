@@ -23,7 +23,7 @@ export class GoTestParser {
         'PASS': TestStatus.Passed,
         'ok': TestStatus.Passed,
         'FAIL': TestStatus.Failed,
-        'SKIP': TestStatus.Unknown
+        'SKIP': TestStatus.Skipped
     };
 
     parse(input: string): Map<string, TestStatus> {
