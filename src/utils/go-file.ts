@@ -16,6 +16,7 @@ export class GoFile {
                  * identify the test routine.
                  *
                  * Valid test function names can be: 'Test', 'Test2', 'TestČ', 'TestSomething', 'Test_', 'Test_Hello'
+                 * Invalid names (not recognized by go test): 'Testčerveny', Testsomething'
                  */
                 const re = XRegExp('^func\\s+(Test([_\\d\\p{Lu}\\p{Lt}]\\p{L}*)?)\\(', 'mg');
                 const functions: string[] = [];

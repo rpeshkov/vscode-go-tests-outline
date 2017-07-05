@@ -10,6 +10,6 @@ export class TreeNode {
     constructor(public name: string, public type: TreeNodeType) {}
     pkgName: string;
     funcName: string;
-    status: TestStatus;
+    status: TestStatus = TestStatus.Unknown;
     child: TreeNode[];
 }
