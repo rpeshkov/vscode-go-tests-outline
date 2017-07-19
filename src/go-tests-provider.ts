@@ -3,9 +3,9 @@ import * as fs from 'fs';
 import * as child from 'child_process';
 import * as path from 'path';
 
-import { Package } from './model/package';
-import { GoUtils } from './go-utils';
 import { GoTest } from './utils/go-test';
+import { GoFile } from './utils/go-file';
+import { GoList } from './utils/go-list';
 import { TreeNode, TreeNodeType } from './model/tree-node';
 import { TestStatus } from './model/test-status';
 
@@ -14,7 +14,7 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
     private _onDidChangeTreeData = new vscode.EventEmitter<TreeNode | null>();
     readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
-    private goUtils: GoUtils;
+    private goList: GoList;
     private tree: TreeNode[];
     private selected: TreeNode;
 
@@ -29,7 +29,7 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
     ]);
 
     constructor(private workspaceRoot: string, private goTest: GoTest) {
-        this.goUtils = new GoUtils();
+        this.goList = new GoList(workspaceRoot);
 
         vscode.commands.registerCommand('gotests_internal.select', (node: TreeNode) => this.selected = node);
 
@@ -84,33 +84,39 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
 
     private async buildTree(): Promise<TreeNode[]> {
         const tree = [];
-        const packages = await this.goUtils.getTestFiles(this.workspaceRoot);
+        const packages = await this.goList.getProjectPackages();
 
+        for (const packageName of packages) {
 
-        for (const p of packages) {
-
-            const node = new TreeNode(p.name, TreeNodeType.package);
-            node.child = [];
-            node.pkgName = p.name;
-
-            const prevNode = this.tree && this.tree.find(x => x.pkgName === p.name);
-            node.status = prevNode ? prevNode.status : TestStatus.Unknown;
-
-            const testFunctions = this.goUtils.getTestFunctions(p);
-
-            for (const f of testFunctions) {
-                const fnode = new TreeNode(f, TreeNodeType.func);
-                fnode.pkgName = node.pkgName;
-                fnode.funcName = f;
-                fnode.status = TestStatus.Unknown;
-                if (prevNode && prevNode.child) {
-                    const prevFuncNode = prevNode.child.find(x => x.funcName === f);
-                    fnode.status = prevFuncNode ? prevFuncNode.status : fnode.status;
+            const packageInfo = await this.goList.getPackageInfo(packageName);
+            if (packageInfo.TestGoFiles && packageInfo.TestGoFiles.length > 0) {
+                let packageTestFunctions: string[] = [];
+                for (const testFile of packageInfo.TestGoFiles) {
+                    const fullTestFile = path.join(packageInfo.Dir, testFile);
+                    const fileTestFunctions = await GoFile.getTestFunctions(fullTestFile);
+                    packageTestFunctions = packageTestFunctions.concat(fileTestFunctions);
                 }
 
-                node.child.push(fnode);
+                if (packageTestFunctions.length > 0) {
+                    const node = new TreeNode(packageName, TreeNodeType.package);
+                    node.child = [];
+                    node.pkgName = packageName;
+                    const prevNode = this.tree && this.tree.find(x => x.pkgName === packageName);
+                    node.status = prevNode ? prevNode.status : TestStatus.Unknown;
+                    for (const testFunction of packageTestFunctions) {
+                        const fnode = new TreeNode(testFunction, TreeNodeType.func);
+                        fnode.pkgName = node.pkgName;
+                        fnode.funcName = testFunction;
+                        if (prevNode && prevNode.child) {
+                            const prevFuncNode = prevNode.child.find(x => x.funcName === testFunction);
+                            fnode.status = prevFuncNode ? prevFuncNode.status : fnode.status;
+                        }
+
+                        node.child.push(fnode);
+                    }
+                    tree.push(node);
+                }
             }
-            tree.push(node);
         }
 
         return tree;

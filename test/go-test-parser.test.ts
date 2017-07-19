@@ -11,42 +11,18 @@ import { TestStatus } from "../src/model/test-status";
 // Defines a Mocha test suite to group tests of similar kind together
 suite("GoTestParser", () => {
 
-    const input = `=== RUN   TestBlank
---- PASS: TestBlank (0.00s)
-=== RUN   TestSuccess
+    test('when all tests "passed", package must have "passed" status', () => {
+        const input = `=== RUN   TestSuccess
 --- PASS: TestSuccess (0.00s)
-	/Users/rpeshkov/go/src/github.com/rpeshkov/multipkg/config_test.go:10: Success
-=== RUN   TestSuccessMultiline
---- PASS: TestSuccessMultiline (0.00s)
-	/Users/rpeshkov/go/src/github.com/rpeshkov/multipkg/config_test.go:14: Success
-		Multiline
-		Yay!
-=== RUN   TestMultilevel
-=== RUN   TestMultilevel/SubTest1
-=== RUN   TestMultilevel/SubTest1/SubSubTest1
---- PASS: TestMultilevel (0.00s)
-    --- PASS: TestMultilevel/SubTest1 (0.00s)
-    	/Users/rpeshkov/go/src/github.com/rpeshkov/multipkg/config_test.go:51: Error1
-    	/Users/rpeshkov/go/src/github.com/rpeshkov/multipkg/config_test.go:55: NIGHTMARE!!!
-        --- PASS: TestMultilevel/SubTest1/SubSubTest1 (0.00s)
-        	/Users/rpeshkov/go/src/github.com/rpeshkov/multipkg/config_test.go:54: Error2
-=== RUN   TestConfigLoadedSuccesfully
---- PASS: TestConfigLoadedSuccesfully (0.00s)
 PASS
-ok  	github.com/rpeshkov/multipkg/config	0.012s`;
+ok  	github.com/rpeshkov/multipkg/config	0.011s`;
 
-
-    test("Test1", () => {
         const gtp = new GoTestParser();
+
         const result = gtp.parse(input);
-        assert.equal(result.size, 6);
 
         const expectedResult = {
-            "TestBlank": TestStatus.Passed,
             "TestSuccess": TestStatus.Passed,
-            "TestSuccessMultiline": TestStatus.Passed,
-            "TestMultilevel": TestStatus.Passed,
-            "TestConfigLoadedSuccesfully": TestStatus.Passed,
             "github.com/rpeshkov/multipkg/config": TestStatus.Passed
         };
 
@@ -54,5 +30,82 @@ ok  	github.com/rpeshkov/multipkg/config	0.012s`;
             assert(result.has(k));
             assert.equal(result.get(k), expectedResult[k]);
         }
+    });
+
+    test('when at least 1 test failed, package must have "failed" status', () => {
+        const input = `=== RUN   TestSuccess
+--- PASS: TestSuccess (0.00s)
+=== RUN   TestError
+--- FAIL: TestError (0.00s)
+	/Users/rpeshkov/go/src/github.com/rpeshkov/multipkg/config_test.go:18: Error
+FAIL
+exit status 1
+FAIL	github.com/rpeshkov/multipkg/config	0.010s`;
+
+        const gtp = new GoTestParser();
+
+        const result = gtp.parse(input);
+        const expectedResult = {
+            "TestSuccess": TestStatus.Passed,
+            "TestError": TestStatus.Failed,
+            "github.com/rpeshkov/multipkg/config": TestStatus.Failed
+        };
+
+        for (const k in expectedResult) {
+            assert(result.has(k));
+            assert.equal(result.get(k), expectedResult[k]);
+        }
+    });
+
+    test('skipped test must not affect overall status', () => {
+        const input = `=== RUN   TestSuccess
+--- PASS: TestSuccess (0.00s)
+=== RUN   TestSkip
+--- SKIP: TestSkip (0.00s)
+PASS
+ok  	github.com/rpeshkov/multipkg/config	0.010s`;
+
+        const gtp = new GoTestParser();
+        const result = gtp.parse(input);
+        const expectedResult = {
+            "TestSuccess": TestStatus.Passed,
+            "TestSkip": TestStatus.Skipped,
+            "github.com/rpeshkov/multipkg/config": TestStatus.Passed
+        };
+
+        for (const k in expectedResult) {
+            assert(result.has(k));
+            assert.equal(result.get(k), expectedResult[k]);
+        }
+    });
+
+    test('status may be "passed", "failed" or "skipped"', () => {
+
+        const input = `=== RUN   TestSuccess
+--- PASS: TestSuccess (0.00s)
+=== RUN   TestSkip
+--- SKIP: TestSkip (0.00s)
+=== RUN   TestError
+--- FAIL: TestError (0.00s)
+	/Users/rpeshkov/go/src/github.com/rpeshkov/multipkg/config_test.go:14: Error
+FAIL
+exit status 1
+FAIL	github.com/rpeshkov/multipkg/config	0.011s`;
+
+        const gtp = new GoTestParser();
+
+        const result = gtp.parse(input);
+        const expectedResult = {
+            "TestSuccess": TestStatus.Passed,
+            "TestSkip": TestStatus.Skipped,
+            "TestError": TestStatus.Failed,
+            "github.com/rpeshkov/multipkg/config": TestStatus.Failed
+        };
+
+        for (const k in expectedResult) {
+            assert(result.has(k));
+            assert.equal(result.get(k), expectedResult[k]);
+        }
+
     });
 });
