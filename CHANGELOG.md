@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.3 - 22nd July, 2017
+- Fixed [Issue 19](https://github.com/rpeshkov/vscode-go-tests-outline/issues/19)
+- Minor fixes
+
 ## 0.1.2 - 5th July, 2017
 - Added handling for skipped tests
 
