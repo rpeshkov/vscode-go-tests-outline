@@ -16,7 +16,10 @@ TBD
 
 ## Release Notes
 
-## 0.1.3 - 22nd July, 2017
+## 0.1.4
+- Fixed broken functionality
+
+## 0.1.3
 - Fixed [Issue 19](https://github.com/rpeshkov/vscode-go-tests-outline/issues/19)
 - Minor fixes
 
