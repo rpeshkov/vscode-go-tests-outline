@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.6 - 22nd March, 2018
+
+- Small bugfix
+
 ## 0.1.5 - 22nd March, 2018
 
 - Discover test files from *_test packages added. Thanks @mattrx

@@ -16,6 +16,10 @@ TBD
 
 ## Release Notes
 
+## 0.1.6 - 22nd March, 2018
+
+- Small bugfix
+
 ## 0.1.5 - 22nd March, 2018
 
 - Discover test files from *_test packages added. Thanks @mattrx
@@ -32,10 +36,6 @@ TBD
 ## 0.1.2
 
 - Added handling for skipped tests
-
-## 0.1.1
-
-- Only functions starting with 'Test' shown
 
 ## License
 
