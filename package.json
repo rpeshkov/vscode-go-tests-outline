@@ -30,12 +30,12 @@
         "commands": [
             {
                 "command": "gotests.launch",
-                "title": "Launch test",
+                "title": "Go Tests Outline: Launch test",
                 "icon": "resources/launch.svg"
             },
             {
                 "command": "gotests.launch_all",
-                "title": "Launch all tests",
+                "title": "Go Tests Outline: Launch all tests",
                 "category": "",
                 "icon": "resources/launch-all.svg"
             }
