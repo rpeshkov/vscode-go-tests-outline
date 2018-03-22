@@ -16,22 +16,26 @@ TBD
 
 ## Release Notes
 
+## 0.1.5 - 22nd March, 2018
+
+- Discover test files from *_test packages added. Thanks @mattrx
+
 ## 0.1.4
+
 - Fixed broken functionality
 
 ## 0.1.3
+
 - Fixed [Issue 19](https://github.com/rpeshkov/vscode-go-tests-outline/issues/19)
 - Minor fixes
 
 ## 0.1.2
+
 - Added handling for skipped tests
 
 ## 0.1.1
-- Only functions starting with 'Test' shown
 
-## 0.1.0
-- Added icons for test status
-- Fixed bug when launching 1 test may cause launch of many tests
+- Only functions starting with 'Test' shown
 
 ## License
 
