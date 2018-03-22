@@ -14,7 +14,12 @@ In order to work properly this extension needs Go to be installed on your machin
 
 TBD
 
-## Release Notes
+## [Changelog](CHANGELOG.md)
+
+## 0.2.0 - 22nd March, 2018
+
+- Added prefix to command names. (#23)
+- Added configuration parameter for setting 'go test' launch arguments. (#20)
 
 ## 0.1.6 - 22nd March, 2018
 
@@ -32,10 +37,6 @@ TBD
 
 - Fixed [Issue 19](https://github.com/rpeshkov/vscode-go-tests-outline/issues/19)
 - Minor fixes
-
-## 0.1.2
-
-- Added handling for skipped tests
 
 ## License
 

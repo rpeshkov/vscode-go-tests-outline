@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.0 - 22nd March, 2018
+
+- Added prefix to command names. (#23)
+- Added configuration parameter for setting 'go test' launch arguments. (#20)
+
 ## 0.1.6 - 22nd March, 2018
 
 - Small bugfix
