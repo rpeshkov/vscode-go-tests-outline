@@ -92,16 +92,20 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
             if (packageInfo.TestGoFiles && packageInfo.TestGoFiles.length > 0) {
                 let packageTestFunctions: string[] = [];
 
-                for (const testFile of packageInfo.TestGoFiles) {
-                    const fullTestFile = path.join(packageInfo.Dir, testFile);
-                    const fileTestFunctions = await GoFile.getTestFunctions(fullTestFile);
-                    packageTestFunctions = packageTestFunctions.concat(fileTestFunctions);
+                if (packageInfo.TestGoFiles) {
+                    for (const testFile of packageInfo.TestGoFiles) {
+                        const fullTestFile = path.join(packageInfo.Dir, testFile);
+                        const fileTestFunctions = await GoFile.getTestFunctions(fullTestFile);
+                        packageTestFunctions = packageTestFunctions.concat(fileTestFunctions);
+                    }
                 }
 
-                for (const testFile of packageInfo.XTestGoFiles) {
-                    const fullTestFile = path.join(packageInfo.Dir, testFile);
-                    const fileTestFunctions = await GoFile.getTestFunctions(fullTestFile);
-                    packageTestFunctions = packageTestFunctions.concat(fileTestFunctions);
+                if (packageInfo.XTestGoFiles) {
+                    for (const testFile of packageInfo.TestGoFiles) {
+                        const fullTestFile = path.join(packageInfo.Dir, testFile);
+                        const fileTestFunctions = await GoFile.getTestFunctions(fullTestFile);
+                        packageTestFunctions = packageTestFunctions.concat(fileTestFunctions);
+                    }
                 }
 
                 if (packageTestFunctions.length > 0) {

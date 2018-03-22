@@ -26,10 +26,22 @@ suite("Extension Tests", () => {
         const gl = new GoList(wd);
         const packages = await gl.getProjectPackages();
         const pkgInfo = await gl.getPackageInfo(packages[2]);
-        for (const file of pkgInfo.TestGoFiles) {
-            console.log(path.join(pkgInfo.Dir, file));
-            const testFunctions = await GoFile.getTestFunctions(path.join(pkgInfo.Dir, file));
-            console.log(testFunctions);
+
+        if (pkgInfo.TestGoFiles) {
+            for (const file of pkgInfo.TestGoFiles) {
+                console.log(path.join(pkgInfo.Dir, file));
+                const testFunctions = await GoFile.getTestFunctions(path.join(pkgInfo.Dir, file));
+                console.log(testFunctions);
+            }
         }
+
+        if (pkgInfo.XTestGoFiles) {
+            for (const file of pkgInfo.XTestGoFiles) {
+                console.log(path.join(pkgInfo.Dir, file));
+                const testFunctions = await GoFile.getTestFunctions(path.join(pkgInfo.Dir, file));
+                console.log(testFunctions);
+            }
+        }
+        
     });
 });
