@@ -144,4 +144,3 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
         this._onDidChangeTreeData.fire();
     }
 }
-

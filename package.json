@@ -40,6 +40,18 @@
                 "icon": "resources/launch-all.svg"
             }
         ],
+        "configuration": {
+            "type": "object",
+            "title": "Go Tests Outline configuration",
+            "properties": {
+                "go-tests-outline.go-test-params": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Sets additional parameters for launching 'go test' command",
+                    "scope": "window"
+                }
+            }
+        },
         "views": {
             "explorer": [
                 {

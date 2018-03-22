@@ -6,11 +6,22 @@ import { TestStatus } from "../model/test-status";
 
 export class GoTest {
 
-    constructor(private channel: vscode.OutputChannel, private parser: GoTestParser) { }
+    constructor(
+        private channel: vscode.OutputChannel,
+        private parser: GoTestParser,
+        public config: vscode.WorkspaceConfiguration
+    ) { }
 
     launch(pkgName: string = './...', funcName: string = undefined): Promise<Map<string, TestStatus>> {
+        const launchParams = this.config.get('go-test-params', '');
+
         return new Promise<Map<string, TestStatus>>(resolve => {
             let cmd = `go test -v`;
+
+            if (launchParams.length > 0) {
+                cmd += ` ` + launchParams;
+            }
+
             if (funcName) {
                 cmd += ` -run "^${funcName}$"`;
             }
