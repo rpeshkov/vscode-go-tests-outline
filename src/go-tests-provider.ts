@@ -89,44 +89,42 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
         for (const packageName of packages) {
 
             const packageInfo = await this.goList.getPackageInfo(packageName);
+            let packageTestFunctions: string[] = [];
+
             if (packageInfo.TestGoFiles && packageInfo.TestGoFiles.length > 0) {
-                let packageTestFunctions: string[] = [];
-
-                if (packageInfo.TestGoFiles) {
-                    for (const testFile of packageInfo.TestGoFiles) {
-                        const fullTestFile = path.join(packageInfo.Dir, testFile);
-                        const fileTestFunctions = await GoFile.getTestFunctions(fullTestFile);
-                        packageTestFunctions = packageTestFunctions.concat(fileTestFunctions);
-                    }
+                for (const testFile of packageInfo.TestGoFiles) {
+                    const fullTestFile = path.join(packageInfo.Dir, testFile);
+                    const fileTestFunctions = await GoFile.getTestFunctions(fullTestFile);
+                    packageTestFunctions = packageTestFunctions.concat(fileTestFunctions);
                 }
+            }
 
-                if (packageInfo.XTestGoFiles) {
-                    for (const testFile of packageInfo.TestGoFiles) {
-                        const fullTestFile = path.join(packageInfo.Dir, testFile);
-                        const fileTestFunctions = await GoFile.getTestFunctions(fullTestFile);
-                        packageTestFunctions = packageTestFunctions.concat(fileTestFunctions);
-                    }
+            if (packageInfo.XTestGoFiles && packageInfo.XTestGoFiles.length > 0) {
+                for (const testFile of packageInfo.TestGoFiles) {
+                    const fullTestFile = path.join(packageInfo.Dir, testFile);
+                    const fileTestFunctions = await GoFile.getTestFunctions(fullTestFile);
+                    packageTestFunctions = packageTestFunctions.concat(fileTestFunctions);
                 }
+            }
 
-                if (packageTestFunctions.length > 0) {
-                    const node = new TreeNode(packageName, TreeNodeType.package);
-                    node.child = [];
-                    node.pkgName = packageName;
-                    const prevNode = this.tree && this.tree.find(x => x.pkgName === packageName);
-                    node.status = prevNode ? prevNode.status : TestStatus.Unknown;
-                    for (const testFunction of packageTestFunctions) {
-                        const fnode = new TreeNode(testFunction, TreeNodeType.func);
-                        fnode.pkgName = node.pkgName;
-                        fnode.funcName = testFunction;
-                        if (prevNode && prevNode.child) {
-                            const prevFuncNode = prevNode.child.find(x => x.funcName === testFunction);
-                            fnode.status = prevFuncNode ? prevFuncNode.status : fnode.status;
-                        }
-
-                        node.child.push(fnode);
+            if (packageTestFunctions.length > 0) {
+                const node = new TreeNode(packageName, TreeNodeType.package);
+                node.child = [];
+                node.pkgName = packageName;
+                const prevNode = this.tree && this.tree.find(x => x.pkgName === packageName);
+                node.status = prevNode ? prevNode.status : TestStatus.Unknown;
+                for (const testFunction of packageTestFunctions) {
+                    const fnode = new TreeNode(testFunction, TreeNodeType.func);
+                    fnode.pkgName = node.pkgName;
+                    fnode.funcName = testFunction;
+                    if (prevNode && prevNode.child) {
+                        const prevFuncNode = prevNode.child.find(x => x.funcName === testFunction);
+                        fnode.status = prevFuncNode ? prevFuncNode.status : fnode.status;
                     }
-                    tree.push(node);
+
+                    node.child.push(fnode);
                 }
+                tree.push(node);
             }
         }
 
