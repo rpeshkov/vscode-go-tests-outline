@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import * as child from 'child_process';
 import * as path from 'path';
 import { GoTestParser } from './go-test-parser';
-import { TestStatus } from "../model/test-status";
+import { TestStatus } from '../model/test-status';
 
 export class GoTest {
 
@@ -49,9 +49,9 @@ export class GoTest {
      * https://github.com/Microsoft/vscode-go/blob/master/src/goTest.ts
      */
     private expandFilePathInOutput(output: string, cwd: string): string {
-        let lines = output.split('\n');
+        const lines = output.split('\n');
         for (let i = 0; i < lines.length; i++) {
-            let matches = lines[i].match(/^\s+(\S+_test.go):(\d+):/);
+            const matches = lines[i].match(/^\s+(\S+_test.go):(\d+):/);
             if (matches) {
                 lines[i] = lines[i].replace(matches[1], path.join(cwd, matches[1]));
             }

@@ -6,10 +6,10 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import * as myExtension from '../src/extension';
 import { GoTestParser } from '../src/utils/go-test-parser';
-import { TestStatus } from "../src/model/test-status";
+import { TestStatus } from '../src/model/test-status';
 
 // Defines a Mocha test suite to group tests of similar kind together
-suite("GoTestParser", () => {
+suite('GoTestParser', () => {
 
     test('when all tests "passed", package must have "passed" status', () => {
         const input = `=== RUN   TestSuccess
@@ -22,8 +22,8 @@ ok  	github.com/rpeshkov/multipkg/config	0.011s`;
         const result = gtp.parse(input);
 
         const expectedResult = {
-            "TestSuccess": TestStatus.Passed,
-            "github.com/rpeshkov/multipkg/config": TestStatus.Passed
+            'TestSuccess': TestStatus.Passed,
+            'github.com/rpeshkov/multipkg/config': TestStatus.Passed
         };
 
         for (const k in expectedResult) {
@@ -46,9 +46,9 @@ FAIL	github.com/rpeshkov/multipkg/config	0.010s`;
 
         const result = gtp.parse(input);
         const expectedResult = {
-            "TestSuccess": TestStatus.Passed,
-            "TestError": TestStatus.Failed,
-            "github.com/rpeshkov/multipkg/config": TestStatus.Failed
+            'TestSuccess': TestStatus.Passed,
+            'TestError': TestStatus.Failed,
+            'github.com/rpeshkov/multipkg/config': TestStatus.Failed
         };
 
         for (const k in expectedResult) {
@@ -68,9 +68,9 @@ ok  	github.com/rpeshkov/multipkg/config	0.010s`;
         const gtp = new GoTestParser();
         const result = gtp.parse(input);
         const expectedResult = {
-            "TestSuccess": TestStatus.Passed,
-            "TestSkip": TestStatus.Skipped,
-            "github.com/rpeshkov/multipkg/config": TestStatus.Passed
+            'TestSuccess': TestStatus.Passed,
+            'TestSkip': TestStatus.Skipped,
+            'github.com/rpeshkov/multipkg/config': TestStatus.Passed
         };
 
         for (const k in expectedResult) {
@@ -96,10 +96,10 @@ FAIL	github.com/rpeshkov/multipkg/config	0.011s`;
 
         const result = gtp.parse(input);
         const expectedResult = {
-            "TestSuccess": TestStatus.Passed,
-            "TestSkip": TestStatus.Skipped,
-            "TestError": TestStatus.Failed,
-            "github.com/rpeshkov/multipkg/config": TestStatus.Failed
+            'TestSuccess': TestStatus.Passed,
+            'TestSkip': TestStatus.Skipped,
+            'TestError': TestStatus.Failed,
+            'github.com/rpeshkov/multipkg/config': TestStatus.Failed
         };
 
         for (const k in expectedResult) {

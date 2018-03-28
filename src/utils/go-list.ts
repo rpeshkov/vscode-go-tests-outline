@@ -29,7 +29,7 @@ export class GoList {
     /**
      * Return names of all packages (including vendor) that found in workingDirectory
      */
-    getAllPackages() : Promise<string[]> {
+    getAllPackages(): Promise<string[]> {
         const cmd = 'go list ./...';
 
         return new Promise(resolve => {
@@ -44,7 +44,7 @@ export class GoList {
      */
     async getVendorPackages(): Promise<string[]> {
         const allPackages = await this.getAllPackages();
-        return allPackages.filter(x => x.includes('/vendor/'))
+        return allPackages.filter(x => x.includes('/vendor/'));
     }
 
     /**
