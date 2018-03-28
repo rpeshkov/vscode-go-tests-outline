@@ -37,16 +37,16 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
             this.tree = await this.buildTree();
             this._onDidChangeTreeData.fire();
         });
-	}
+    }
 
     getTreeItem(element: TreeNode): vscode.TreeItem {
         const collapsibleState = element.child && element.child.length > 0
             ? vscode.TreeItemCollapsibleState.Expanded
             : vscode.TreeItemCollapsibleState.None;
 
-        let treeItem = new vscode.TreeItem(element.name, collapsibleState);
-		treeItem.iconPath = path.join(__filename, '..', '..', '..', 'resources', this.statusIcons.get(element.status));
-		treeItem.contextValue = 'gotest';
+        const treeItem = new vscode.TreeItem(element.name, collapsibleState);
+        treeItem.iconPath = path.join(__filename, '..', '..', '..', 'resources', this.statusIcons.get(element.status));
+        treeItem.contextValue = 'gotest';
 
         treeItem.command = {
             command: 'gotests_internal.select',
@@ -58,10 +58,10 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
     }
 
     async getChildren(element?: TreeNode): Promise<TreeNode[]> {
-		if (!this.workspaceRoot) {
-			vscode.window.showInformationMessage('Unable to find tests');
-			return Promise.resolve([]);
-		}
+        if (!this.workspaceRoot) {
+            vscode.window.showInformationMessage('Unable to find tests');
+            return Promise.resolve([]);
+        }
 
         if (!element) {
             this.tree = await this.buildTree();
@@ -69,11 +69,11 @@ export class GoTestsProvider implements vscode.TreeDataProvider<TreeNode> {
         }
 
         return element.child;
-	}
+    }
 
     async launch(test: TreeNode) {
         test = test || this.selected;
-        const results = await this.goTest.launch(test.pkgName, test.funcName)
+        const results = await this.goTest.launch(test.pkgName, test.funcName);
         this.updateStatuses(this.tree, results);
     }
 

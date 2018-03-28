@@ -17,7 +17,7 @@ export function activate(context: vscode.ExtensionContext) {
     const config = vscode.workspace.getConfiguration(CFG_SECTION);
 
     const rootPath = vscode.workspace.rootPath;
-    const outputChannel = vscode.window.createOutputChannel("Go Tests Outline");
+    const outputChannel = vscode.window.createOutputChannel('Go Tests Outline');
     const parser = new GoTestParser();
     const goTest = new GoTest(outputChannel, parser, config);
 
