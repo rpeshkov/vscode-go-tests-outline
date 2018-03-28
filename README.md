@@ -1,5 +1,9 @@
 # Go Tests Outliner for VSCode
 
+[![version][version-badge]][CHANGELOG]
+[![license][license-badge]][LICENSE]
+[![Build Status](https://travis-ci.org/rpeshkov/vscode-go-tests-outline.svg?branch=master)](https://travis-ci.org/rpeshkov/vscode-go-tests-outline)
+
 Go Tests Outliner is Visual Studio Code extension that adds custom view with tests of currently opened Go project.
 
 ## Features
@@ -38,6 +42,7 @@ TBD
 - Fixed [Issue 19](https://github.com/rpeshkov/vscode-go-tests-outline/issues/19)
 - Minor fixes
 
-## License
-
-[MIT](LICENSE)
+[CHANGELOG]: ./CHANGELOG.md
+[LICENSE]: ./LICENSE
+[version-badge]: https://img.shields.io/badge/version-0.2.0-blue.svg
+[license-badge]: https://img.shields.io/badge/license-MIT-blue.svg
